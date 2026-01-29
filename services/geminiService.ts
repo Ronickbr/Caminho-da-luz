@@ -3,19 +3,27 @@ import { GoogleGenAI, Modality } from "@google/genai";
 
 // Use process.env.API_KEY directly in the constructor as per guidelines.
 export class GeminiService {
-  private ai: GoogleGenAI;
+  private ai: GoogleGenAI | null = null;
 
-  constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  private getAI() {
+    const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+    if (!apiKey || apiKey === "undefined") {
+      throw new Error("API Key não configurada. Por favor, configure a variável GEMINI_API_KEY no arquivo .env.local");
+    }
+    if (!this.ai) {
+      this.ai = new GoogleGenAI({ apiKey });
+    }
+    return this.ai;
   }
 
   async speak(text: string, voiceName: string = 'Zephyr') {
     try {
-      const response = await this.ai.models.generateContent({
-        model: "gemini-2.5-flash-preview-tts",
+      const ai = this.getAI();
+      const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash-exp", // Updated to a more common model name if needed, but keeping logic
         contents: [{ parts: [{ text: `Leia calmamente e com tom espiritual: ${text}` }] }],
         config: {
-          responseModalities: [Modality.AUDIO],
+          responseModalities: ["AUDIO" as any],
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: { voiceName },
