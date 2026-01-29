@@ -1,0 +1,7 @@
+{
+  "name": "Programa Espiritual de 9 Semanas",
+  "description": "Uma jornada transformadora de 63 dias com afirmações diárias, orações e diário espiritual para crescimento pessoal e serenidade.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
